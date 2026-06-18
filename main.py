@@ -4,14 +4,16 @@ import requests
 
 app = Flask(__name__)
 
-BALE_TOKEN = os.environ.get("BALE_TOKEN")
+TOKEN = os.environ.get("BALE_TOKEN")
 
 @app.route("/")
 def home():
-    if BALE_TOKEN:
-        return "Bale Bot Token Loaded"
-    else:
-        return "Token Not Found"
+    try:
+        url = f"https://tapi.bale.ai/bot{TOKEN}/getMe"
+        response = requests.get(url, timeout=10)
+        return response.text
+    except Exception as e:
+        return str(e)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
