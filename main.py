@@ -1,11 +1,17 @@
 from flask import Flask
 import os
+import requests
 
 app = Flask(__name__)
 
+BALE_TOKEN = os.environ.get("BALE_TOKEN")
+
 @app.route("/")
 def home():
-    return "Bale Bot Online"
+    if BALE_TOKEN:
+        return "Bale Bot Token Loaded"
+    else:
+        return "Token Not Found"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
