@@ -2,11 +2,29 @@ from flask import Flask, request
 import json
 import os
 import requests
+import sqlite3
 
 app = Flask(__name__)
 
 TOKEN = os.environ.get("BALE_TOKEN")
 
+def init_db():
+    conn = sqlite3.connect("bot.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        chat_id TEXT,
+        fullname TEXT,
+        phone TEXT,
+        source TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 
 @app.route("/")
 def home():
@@ -57,7 +75,7 @@ def send_admin_button(chat_id):
 
     requests.post(url, json=payload)
 
-
+init_db()
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
