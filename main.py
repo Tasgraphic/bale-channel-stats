@@ -1,20 +1,19 @@
-from flask import Flask
-import os
-import requests
+from flask import Flask, request
+import json
 
 app = Flask(__name__)
 
-TOKEN = os.environ.get("BALE_TOKEN")
-
 @app.route("/")
 def home():
-    try:
-        url = f"https://tapi.bale.ai/bot{TOKEN}/getMe"
-        response = requests.get(url, timeout=10)
-        return response.text
-    except Exception as e:
-        return str(e)
+    return "Webhook Ready"
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    print("=== NEW UPDATE ===")
+    print(json.dumps(request.json, ensure_ascii=False, indent=2))
+    return "OK", 200
 
 if __name__ == "__main__":
+    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
