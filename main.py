@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 TOKEN = os.environ.get("BALE_TOKEN")
 
+
 def init_db():
     conn = sqlite3.connect("bot.db")
     cursor = conn.cursor()
@@ -25,6 +26,7 @@ def init_db():
 
     conn.commit()
     conn.close()
+
 
 @app.route("/")
 def home():
@@ -47,12 +49,12 @@ def webhook():
         chat_type = chat.get("type")
 
         if chat_type != "channel":
-            send_admin_button(chat_id)
+            send_menu(chat_id)
 
     return "OK", 200
 
 
-def send_admin_button(chat_id):
+def send_menu(chat_id):
 
     url = f"https://tapi.bale.ai/bot{TOKEN}/sendMessage"
 
@@ -63,19 +65,27 @@ def send_admin_button(chat_id):
                     "text": "👤 ارتباط با ادمین",
                     "url": "https://ble.ir/seiedghasemtaffakh"
                 }
+            ],
+            [
+                {
+                    "text": "📝 ثبت اطلاعات",
+                    "callback_data": "register"
+                }
             ]
         ]
     }
 
     payload = {
         "chat_id": chat_id,
-        "text": "برای ارتباط با مدیریت روی دکمه زیر کلیک کنید:",
+        "text": "لطفاً یکی از گزینه‌ها را انتخاب کنید:",
         "reply_markup": keyboard
     }
 
     requests.post(url, json=payload)
 
+
 init_db()
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
