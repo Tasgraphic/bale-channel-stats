@@ -68,7 +68,7 @@ def send_menu(chat_id):
             ],
             [
                 {
-                    "text": "📝 ثبت اطلاعات",
+                    "text": "📝  ثبت اطلاعات تماس",
                     "callback_data": "register"
                 }
             ]
