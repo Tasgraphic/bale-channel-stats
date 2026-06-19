@@ -105,12 +105,12 @@ def send_message(chat_id, text, keyboard=None):
     url = f"https://tapi.bale.ai/bot{TOKEN}/sendMessage"
 
     payload = {
-    "chat_id": chat_id,
-    "text": text
+        "chat_id": chat_id,
+        "text": text
     }
 
     if keyboard:
-    payload["reply_markup"] = keyboard
+        payload["reply_markup"] = keyboard
 
     response = requests.post(url, json=payload)
 
@@ -118,11 +118,12 @@ def send_message(chat_id, text, keyboard=None):
     print(response.text)
 
     try:
-    print("MESSAGE ID =", response.json()["result"]["message_id"])
-    return response.json()
+        print("MESSAGE ID =", response.json()["result"]["message_id"])
+        return response.json()
+
     except Exception as e:
-    print("ERROR:", e)
-    return None
+        print("ERROR:", e)
+        return None
 
 
 # ---------------- KEYBOARDS ----------------
