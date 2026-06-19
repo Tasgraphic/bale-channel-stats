@@ -99,6 +99,7 @@ def save_user(chat_id, fullname, phone, source):
 
 # ---------------- BALE API ----------------
 
+
 def send_message(chat_id, text, keyboard=None):
 
     url = f"https://tapi.bale.ai/bot{TOKEN}/sendMessage"
@@ -117,6 +118,7 @@ def send_message(chat_id, text, keyboard=None):
     print(response.text)
 
     try:
+        print("MESSAGE ID =", response.json()["result"]["message_id"])
         return response.json()
     except:
         return None
