@@ -24,8 +24,47 @@ def init_db():
     )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user_states (
+        chat_id TEXT PRIMARY KEY,
+        step TEXT
+    )
+    """)
+
     conn.commit()
     conn.close()
+
+
+def set_state(chat_id, step):
+    conn = sqlite3.connect("bot.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT OR REPLACE INTO user_states (chat_id, step) VALUES (?, ?)",
+        (str(chat_id), step)
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_state(chat_id):
+    conn = sqlite3.connect("bot.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT step FROM user_states WHERE chat_id = ?",
+        (str(chat_id),)
+    )
+
+    result = cursor.fetchone()
+
+    conn.close()
+
+    if result:
+        return result[0]
+
+    return None
 
 
 @app.route("/")
@@ -34,7 +73,6 @@ def home():
 
 
 def send_message(chat_id, text):
-
     url = f"https://tapi.bale.ai/bot{TOKEN}/sendMessage"
 
     payload = {
@@ -43,43 +81,6 @@ def send_message(chat_id, text):
     }
 
     requests.post(url, json=payload)
-
-
-@app.route("/webhook", methods=["POST"])
-def webhook():
-    data = request.json
-
-    print("=== NEW UPDATE ===")
-    print(json.dumps(data, ensure_ascii=False, indent=2))
-
-    # کلیک روی دکمه ثبت اطلاعات
-    if "callback_query" in data:
-
-        callback = data["callback_query"]
-
-        if callback.get("data") == "register":
-
-            chat_id = callback["from"]["id"]
-
-            send_message(
-                chat_id,
-                "لطفاً نام و نام خانوادگی خود را وارد کنید:"
-            )
-
-            return "OK", 200
-
-    # اگر پیام خصوصی بود
-    if "message" in data:
-        message = data["message"]
-
-        chat = message.get("chat", {})
-        chat_id = chat.get("id")
-        chat_type = chat.get("type")
-
-        if chat_type != "channel":
-            send_menu(chat_id)
-
-    return "OK", 200
 
 
 def send_menu(chat_id):
@@ -110,6 +111,46 @@ def send_menu(chat_id):
     }
 
     requests.post(url, json=payload)
+
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    data = request.json
+
+    print("=== NEW UPDATE ===")
+    print(json.dumps(data, ensure_ascii=False, indent=2))
+
+    # کلیک روی دکمه ثبت اطلاعات
+    if "callback_query" in data:
+
+        callback = data["callback_query"]
+
+        if callback.get("data") == "register":
+
+            chat_id = callback["from"]["id"]
+
+            set_state(chat_id, "fullname")
+
+            send_message(
+                chat_id,
+                "لطفاً نام و نام خانوادگی خود را وارد کنید:"
+            )
+
+            return "OK", 200
+
+    # پیام‌های عادی
+    if "message" in data:
+
+        message = data["message"]
+
+        chat = message.get("chat", {})
+        chat_id = chat.get("id")
+        chat_type = chat.get("type")
+
+        if chat_type != "channel":
+            send_menu(chat_id)
+
+    return "OK", 200
 
 
 init_db()
