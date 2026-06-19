@@ -67,6 +67,43 @@ def get_state(chat_id):
     return None
 
 
+def save_fullname(chat_id, fullname):
+    conn = sqlite3.connect("bot.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO users (chat_id, fullname)
+        VALUES (?, ?)
+        """,
+        (str(chat_id), fullname)
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def update_phone(chat_id, phone):
+    conn = sqlite3.connect("bot.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET phone = ?
+        WHERE id = (
+            SELECT MAX(id)
+            FROM users
+            WHERE chat_id = ?
+        )
+        """,
+        (phone, str(chat_id))
+    )
+
+    conn.commit()
+    conn.close()
+
+
 @app.route("/")
 def home():
     return "Webhook Ready"
@@ -115,12 +152,13 @@ def send_menu(chat_id):
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
+
     data = request.json
 
     print("=== NEW UPDATE ===")
     print(json.dumps(data, ensure_ascii=False, indent=2))
 
-    # کلیک روی دکمه ثبت اطلاعات
+    # کلیک روی ثبت اطلاعات
     if "callback_query" in data:
 
         callback = data["callback_query"]
@@ -138,7 +176,7 @@ def webhook():
 
             return "OK", 200
 
-    # پیام‌های عادی
+    # پیام عادی
     if "message" in data:
 
         message = data["message"]
@@ -148,6 +186,26 @@ def webhook():
         chat_type = chat.get("type")
 
         if chat_type != "channel":
+
+            state = get_state(chat_id)
+
+            text = message.get("text", "")
+
+            # مرحله نام
+            if state == "fullname":
+
+                save_fullname(chat_id, text)
+
+                set_state(chat_id, "phone")
+
+                send_message(
+                    chat_id,
+                    "لطفاً شماره تماس خود را وارد کنید:"
+                )
+
+                return "OK", 200
+
+            # منوی اصلی
             send_menu(chat_id)
 
     return "OK", 200
