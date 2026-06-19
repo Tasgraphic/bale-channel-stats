@@ -118,10 +118,10 @@ def send_message(chat_id, text, keyboard=None):
     print(response.text)
 
     try:
-        print("MESSAGE ID =", response.json()["result"]["message_id"])
-        return response.json()
-    except:
-        return None
+    print("MESSAGE ID =", response.json()["result"]["message_id"])
+    return response.json()
+except:
+    return None
 
 
 # ---------------- KEYBOARDS ----------------
