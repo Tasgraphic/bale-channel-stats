@@ -33,12 +33,40 @@ def home():
     return "Webhook Ready"
 
 
+def send_message(chat_id, text):
+
+    url = f"https://tapi.bale.ai/bot{TOKEN}/sendMessage"
+
+    payload = {
+        "chat_id": chat_id,
+        "text": text
+    }
+
+    requests.post(url, json=payload)
+
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.json
 
     print("=== NEW UPDATE ===")
     print(json.dumps(data, ensure_ascii=False, indent=2))
+
+    # کلیک روی دکمه ثبت اطلاعات
+    if "callback_query" in data:
+
+        callback = data["callback_query"]
+
+        if callback.get("data") == "register":
+
+            chat_id = callback["from"]["id"]
+
+            send_message(
+                chat_id,
+                "لطفاً نام و نام خانوادگی خود را وارد کنید:"
+            )
+
+            return "OK", 200
 
     # اگر پیام خصوصی بود
     if "message" in data:
@@ -68,7 +96,7 @@ def send_menu(chat_id):
             ],
             [
                 {
-                    "text": "📝  ثبت اطلاعات تماس",
+                    "text": "📝 ثبت اطلاعات تماس",
                     "callback_data": "register"
                 }
             ]
