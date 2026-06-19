@@ -126,6 +126,26 @@ def send_message(chat_id, text, keyboard=None):
         return None
 
 
+def edit_message(chat_id, message_id, text, keyboard=None):
+
+    url = f"https://tapi.bale.ai/bot{TOKEN}/editMessageText"
+
+    payload = {
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "text": text
+    }
+
+    if keyboard:
+        payload["reply_markup"] = keyboard
+
+    response = requests.post(url, json=payload)
+
+    print("=== EDIT RESPONSE ===")
+    print(response.text)
+
+    return response.json()
+
 # ---------------- KEYBOARDS ----------------
 
 
