@@ -102,25 +102,25 @@ def save_user(chat_id, fullname, phone, source):
 
 def send_message(chat_id, text, keyboard=None):
 
-url = f"https://tapi.bale.ai/bot{TOKEN}/sendMessage"
+    url = f"https://tapi.bale.ai/bot{TOKEN}/sendMessage"
 
-payload = {
+    payload = {
     "chat_id": chat_id,
     "text": text
-}
+    }
 
-if keyboard:
+    if keyboard:
     payload["reply_markup"] = keyboard
 
-response = requests.post(url, json=payload)
+    response = requests.post(url, json=payload)
 
-print("=== BALE RESPONSE ===")
-print(response.text)
+    print("=== BALE RESPONSE ===")
+    print(response.text)
 
-try:
+    try:
     print("MESSAGE ID =", response.json()["result"]["message_id"])
     return response.json()
-except Exception as e:
+    except Exception as e:
     print("ERROR:", e)
     return None
 
