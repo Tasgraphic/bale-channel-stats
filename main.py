@@ -111,7 +111,15 @@ def send_message(chat_id, text, keyboard=None):
     if keyboard:
         payload["reply_markup"] = keyboard
 
-    requests.post(url, json=payload)
+    response = requests.post(url, json=payload)
+
+    print("=== BALE RESPONSE ===")
+    print(response.text)
+
+    try:
+        return response.json()
+    except:
+        return None
 
 
 # ---------------- KEYBOARDS ----------------
