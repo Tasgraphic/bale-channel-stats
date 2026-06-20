@@ -4,13 +4,20 @@ from database import init_database
 
 # ساخت برنامه
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bot.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # تنظیمات
 app.config.from_object(Config)
 
+# دیتابیس
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bot.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# اتصال دیتابیس
+init_database(app)
+
+
+@app.route("/")
+def home():
 # اتصال دیتابیس
 init_database(app)
 
