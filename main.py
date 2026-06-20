@@ -15,16 +15,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # اتصال دیتابیس
 init_database(app)
 
-
 @app.route("/")
 def home():
-# اتصال دیتابیس
-init_database(app)
-
-
-@app.route("/")
-def home():
-
     return "Bale Analyzer is Running 🚀"
 
 
