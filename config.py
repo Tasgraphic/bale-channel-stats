@@ -8,7 +8,7 @@ class Config:
 
     SECRET_KEY = os.environ.get(
         "SECRET_KEY",
-        "change-this-secret"
+        "change-this-key"
     )
 
     SQLALCHEMY_DATABASE_URI = os.environ.get(
@@ -16,6 +16,3 @@ class Config:
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-
-BALE_TOKEN = os.environ.get("BALE_TOKEN")
