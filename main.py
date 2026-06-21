@@ -1,6 +1,7 @@
 from flask import Flask
 from config import Config
 from database import init_database
+import models
 
 
 app = Flask(__name__)
@@ -11,10 +12,6 @@ app.config.from_object(Config)
 
 # اتصال دیتابیس
 init_database(app)
-
-
-# معرفی مدل‌ها به SQLAlchemy
-import models
 
 
 @app.route("/")
