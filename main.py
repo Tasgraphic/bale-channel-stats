@@ -1,7 +1,7 @@
 from flask import Flask
 from config import Config
 from database import init_database
-import models
+from models import Channel
 
 
 app = Flask(__name__)
