@@ -13,6 +13,10 @@ app.config.from_object(Config)
 init_database(app)
 
 
+# معرفی مدل‌ها به SQLAlchemy
+import models
+
+
 @app.route("/")
 def home():
     return "Bale Analyzer is Running 🚀"
